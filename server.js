@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express'); // lets you run express
 const app = express(); // calls express to work 
 const fruits = require('./models/fruits'); // calls fruits array
