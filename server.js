@@ -1,13 +1,13 @@
-const express = require('express');
-const app = express();
-const fruits = require('./models/fruits');
-const vegetables = require('./models/vegetables');
+const express = require('express'); // lets you run express
+const app = express(); // calls express to work 
+const fruits = require('./models/fruits'); // calls fruits array
+const vegetables = require('./models/vegetables'); // calls vegetables array
 
 app.set('view engine', 'jsx');
 app.engine('jsx', require('express-react-views').createEngine());
 
 //Middelware
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true })) // allows code below to work (req.body)
 app.use((req, res, next) => {
     console.log(req.body)
     next()
@@ -36,7 +36,7 @@ app.get('/vegetables/new', (req, res) => {
 
 //Create week11day1
 
-app.post('/fruits', (req, res) => {
+app.post('/fruits', (req, res) => { // massage data to change it from on to true and off to false
     if(req.body.readyToEat === 'on'){
         req.body.readyToEat = true;
     } else {
