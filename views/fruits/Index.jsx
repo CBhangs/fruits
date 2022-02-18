@@ -11,7 +11,7 @@ class Index extends React.Component {
                 </nav>
                 <ul>
                 {
-                    fruits.map((fruit, i) => {
+                    fruits.map((fruit) => {
                         return (
                             <li key={`${fruit._id}`}><a href={`/fruits/${fruit._id}`}>{fruit.name}</a> is the color of {fruit.color}</li>
                         )
