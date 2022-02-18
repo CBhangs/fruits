@@ -1,11 +1,22 @@
 require('dotenv').config()
+console.log(process.env.MONGO_URI)
 const express = require('express'); // lets you run express
+const mongoose = require('mongoose') // lest you run mongoose
 const app = express(); // calls express to work 
-const fruits = require('./models/fruits'); // calls fruits array
-const vegetables = require('./models/vegetables'); // calls vegetables array
+const Fruit = require('./models/fruits'); // imports fruits from wherever it is 
+const Veggie = require('./models/vegetables'); // imports vegetables from wherever it is
 
+
+// MVC Setup
+
+//views
 app.set('view engine', 'jsx');
 app.engine('jsx', require('express-react-views').createEngine());
+//models
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
 
 //Middelware
 app.use(express.urlencoded({ extended: true })) // allows code below to work (req.body)
@@ -14,12 +25,30 @@ app.use((req, res, next) => {
     next()
 })
 
-// Index week10day3
+// Index week10day3 changed on week1day2
 app.get('/fruits', (req, res) => {
-    res.render('fruits/Index', { fruits })
+    Fruit.find({}, (err, foundFruits) => {
+        if (err) {
+            res.status(400).send(err)
+        } else {
+            res.render('fruits/Index', {
+                fruits: foundFruits
+            })
+        }
+    })
+
 });
 app.get('/vegetables', (req, res) => {
-    res.render('vegetables/Index', { vegetables })
+    Veggie.find({}, (err, foundVegetables) => {
+        if (err) {
+            res.status(400).send(err)
+        } else {
+            res.render('vegetables/Index', {
+                vegetables: foundVegetables
+            })
+        }
+    })
+
 });
 
 // New week11day1
@@ -35,16 +64,24 @@ app.get('/vegetables/new', (req, res) => {
 
 //Update
 
-//Create week11day1
+//Create week11day1 updated on week11day2
 
-app.post('/fruits', (req, res) => { // massage data to change it from on to true and off to false
+app.post('/fruits', (req, res) => {
     if(req.body.readyToEat === 'on'){
         req.body.readyToEat = true;
     } else {
         req.body.readyToEat = false;
     }
-    fruits.push(req.body);
-    res.redirect('/fruits');
+
+    Fruit.create(req.body, (err, createdFruit) => {
+        if (err) {
+            res.status(403).send(err)
+        } else {
+            console.log(createdFruit)
+            res.redirect('/fruits')
+        }
+    })
+
 })
 app.post('/vegetables', (req, res) => {
     if(req.body.readyToEat === 'on'){
@@ -52,22 +89,42 @@ app.post('/vegetables', (req, res) => {
     } else {
         req.body.readyToEat = false;
     }
-    vegetables.push(req.body);
-    res.redirect('/vegetables');
+
+    Veggie.create(req.body, (err, createdVeggie) => {
+        if (err) {
+            res.status(403).send(err)
+        } else {
+            console.log(createdVeggie)
+            res.redirect('/vegetables')
+        }
+    })
+
 })
 
 //Edit
 
-//Show week10day3
+//Show week10day3 updated week11day2
 
-app.get('/fruits/:indexOfFruitsArray', (req, res) => {
-    res.render('fruits/Show', {
-        fruit: fruits[req.params.indexOfFruitsArray]
+app.get('/fruits/:id', (req, res) => {
+    Fruit.findById(req.params.id, (err, foundFruit) => {
+        if (err) {
+            res.status(400).send(err)
+        } else {
+            res.render('fruits/Show', {
+                fruit: foundFruit
+            })
+        }
     })
 })
-app.get('/vegetables/:indexOfVegetablesArray', (req, res) => {
-    res.render('vegetables/Show', {
-        veggie: vegetables[req.params.indexOfVegetablesArray]
+app.get('/vegetables/:id', (req, res) => {
+    Veggie.findById(req.params.id, (err, foundVeggie) => {
+        if (err) {
+            res.status(400).send(err)
+        } else {
+            res.render('vegetables/Show', {
+                veggie: foundVeggie
+            })
+        }
     })
 })
 

@@ -7,13 +7,13 @@ class Index extends React.Component {
             <div>
                 <h1>This is the Index Page of My Beautiful Collection of Fruit</h1>
                 <nav>
-                    <a href='/fruits/new'>Go to new page</a>
+                    <a href="/fruits/new">Go to the new page</a>
                 </nav>
                 <ul>
                 {
                     fruits.map((fruit, i) => {
                         return (
-                            <li><a href={`/fruits/${i}`}>{fruit.name}</a> is the color of {fruit.color}</li>
+                            <li key={`${fruit._id}`}><a href={`/fruits/${fruit._id}`}>{fruit.name}</a> is the color of {fruit.color}</li>
                         )
                     })
                 }
