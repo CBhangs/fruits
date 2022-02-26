@@ -2,6 +2,7 @@ require('dotenv').config()
 console.log(process.env.MONGO_URI)
 const express = require('express'); // lets you run express
 const mongoose = require('mongoose') // lest you run mongoose
+const methodOverride = require('method-override');
 const app = express(); // calls express to work 
 const Fruit = require('./models/fruits'); // imports fruits from wherever it is 
 const Veggie = require('./models/vegetables'); // imports vegetables from wherever it is
@@ -9,7 +10,7 @@ const Veggie = require('./models/vegetables'); // imports vegetables from wherev
 
 // MVC Setup
 
-//views
+//VIEWS
 app.set('view engine', 'jsx');
 app.engine('jsx', require('express-react-views').createEngine());
 //models
@@ -18,14 +19,15 @@ mongoose.connect(process.env.MONGO_URI, {
     useUnifiedTopology: true
 })
 
-//Middelware
-app.use(express.urlencoded({ extended: true })) // allows code below to work (req.body)
+//MIDDELWARE
+app.use(express.urlencoded({ extended: true })) // User sends request, Middleware runs between controller and callback functions
 app.use((req, res, next) => {
     console.log(req.body)
     next()
 })
+app.use(methodOverride('_method'))
 
-// Index week10day3 changed on week1day2
+// INDEX week10day3 changed on week 1 day 2
 app.get('/fruits', (req, res) => {
     Fruit.find({}, (err, foundFruits) => {
         if (err) {
@@ -51,7 +53,7 @@ app.get('/vegetables', (req, res) => {
 
 });
 
-// New week11day1
+// NEW week11day1
 app.get('/fruits/new', (req, res) => {
     res.render('fruits/New')
 })
@@ -60,11 +62,38 @@ app.get('/vegetables/new', (req, res) => {
 })
 
 
-// Delete
+// DELETE updated on week 12 day 2
+app.delete('/fruits/:id', (req, res) => {
+    Fruit.findByIdAndDelete(req.params.id, (err, deletedFruit) => {
+        if(!err){
+            res.redirect('/fruits')
+        } else {
+            res.status(400).send(err)
+        }
+    })
+})
 
-//Update
+//UPDATE  week 12 day 2
+app.put('/fruits/:id', (req, res) => {
+    if(req.body.readyToEat === 'on'){
+        req.body.readyToEat = true;
+    }else {
+        req.body.readyToEat = false;
+    }
 
-//Create week11day1 updated on week11day2
+    Fruit.findByIdAndUpdate(req.params.id, req.body, { new: true }, (err, updatedFruit) => {
+        if(err){
+            res.status(400).send(err)
+        } else {
+            res.redirect(`/fruits/${req.params.id}`)
+        }
+    })
+})
+
+
+
+
+//CREATE week11day1 updated on week 11 day 2
 
 app.post('/fruits', (req, res) => {
     if(req.body.readyToEat === 'on'){
@@ -101,9 +130,20 @@ app.post('/vegetables', (req, res) => {
 
 })
 
-//Edit
+//EDIT updated week 12 day 2
+app.get('/fruits/:id/edit', (req, res) => {
+    Fruit.findById(req.params.id, (err, foundFruit) => {
+        if(err){
+            res.status(400).send(err)
+        } else {
+            res.render('fruits/Edit', {
+                fruit: foundFruit
+            })
+        }
+    })
+})
 
-//Show week10day3 updated week11day2
+//SHOW week10day3 updated week11day2
 
 app.get('/fruits/:id', (req, res) => {
     Fruit.findById(req.params.id, (err, foundFruit) => {

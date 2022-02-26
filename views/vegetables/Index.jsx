@@ -1,4 +1,5 @@
 const React = require('react')
+const Default = require('../layout/Default.jsx');
 
 class Index extends React.Component {
     render(){
