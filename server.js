@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 console.log(process.env.MONGO_URI)
 const express = require('express'); // lets you run express
 const mongoose = require('mongoose') // lest you run mongoose
@@ -12,6 +12,8 @@ const Veggie = require('./models/vegetables'); // imports vegetables from wherev
 
 //VIEWS
 app.set('view engine', 'jsx');
+//```javascript//tells express to try to match requests with files in the directory called 'public'```
+app.use(express.static('public'));
 app.engine('jsx', require('express-react-views').createEngine());
 //models
 mongoose.connect(process.env.MONGO_URI, {
